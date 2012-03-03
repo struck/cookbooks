@@ -1,6 +1,12 @@
 Chef Cookbooks
 =====================
 
+A collection of custom built and modified cookbooks. Each should have its own readme file.
+
+
+
+
+
 To test a cookbook:
 
 mkdir ~/cookbook_tests
