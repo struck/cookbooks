@@ -29,11 +29,6 @@ The version of Tornado to install. Current latest version: 2.2
 ---------------
 Defines the method with which to download and install tornado. :pip (default) will install using the python package manager. :tarball will download the tarball and run setup.py build and install.
 
-Additional attributes, less important:
---------------------------------------
-* :tmp_dir
-* :user
-
 Usage
 =====
 

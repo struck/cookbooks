@@ -12,7 +12,9 @@ package 'curl'
 
 # The tarball and checksum to download.
 tarball = "amon-#{node[:amon][:version]}.tar.gz"
-tarball_checksum = "6203fcacf3cbe6e05f3732ed44b4061285f34577c8e5dc527baf6b21787b6688"
+tarball_checksum = case node[:tornado][:version].to_s
+when "0.7.5" then "6203fcacf3cbe6e05f3732ed44b4061285f34577c8e5dc527baf6b21787b6688"
+end
 
 # 1. Download Amon from http://install.amon.cx/amon-0.7.5.tar.gz and install the package with sudo python setup.py install
 
@@ -21,7 +23,8 @@ tarball_checksum = "6203fcacf3cbe6e05f3732ed44b4061285f34577c8e5dc527baf6b21787b
 # amon user will own the files
 remote_file File.join(node[:amon][:tmp_dir], tarball) do
   source "http://install.amon.cx/#{tarball}"
-  owner node[:amon][:user]
+  # owner node[:amon][:user]
+  mode "0644"
   # SHA-256 checksum
   checksum "#{tarball_checksum}"
 end
@@ -29,14 +32,16 @@ end
 # Unzip the tarball into the /tmp/amon directory
 # Overwrite any existing dir called 'amon'
 # amon user will own the files
+# execute "tar -jxvf #{tarball} amon --overwrite" do
 execute "tar zxf #{tarball} amon --overwrite" do
   cwd node[:amon][:tmp_dir]
-  user node[:amon][:user]
+  # user node[:amon][:user]
+  user 'root'
 end
 
 # Run the setup.py command using python
 # run as root, to install py packages
-execute "python /tmp/amon/setup.py install" do
+execute "python ./setup.py install" do
   cwd File.join(node[:amon][:tmp_dir], 'amon')
   # user node[:amon][:user]
   user 'root'
@@ -49,7 +54,8 @@ pkgs.each { |pkg| package pkg }
 # 3. Copy the configuration file from http://config.amon.cx/amon.conf to /etc/amon.conf
 remote_file "/etc/amon.conf" do 
   source "http://config.amon.cx/amon.conf";
-  owner node[:amon][:user]
+  # owner node[:amon][:user]
+  owner 'root'
   # SHA-256 checksum
   checksum "05326804ac1d129062ca501efbb43ba6752a84f00135aa85abb2e64f372e7a90"
 end
@@ -79,13 +85,3 @@ end
 directory "/usr/local/amon" do 
   owner node[:amon][:user]
 end
-
-# Config. We override what was written to the amon.conf file based on the config that now lives
-# in our cookbook.
-require 'json'
-file "Set custom config" do
-  path = "/etc/amon.conf"
-  content = node[:amon][:config].to_json
-  owner node[:amon][:user]
-end
-
