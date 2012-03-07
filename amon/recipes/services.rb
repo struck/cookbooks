@@ -1,24 +1,24 @@
 # Start the services
 
-if node[:amon][:install_method] == :auto
-  
-  # Auto mode
-  
-  service "amon" do
-    supports :restart => true, :start => true, :stop => true, :status => true
-    action [ :enable, :restart ]
-  end
-  service "amond" do
-    supports :restart => true, :start => true, :stop => true, :status => true
-    action [ :enable, :restart ]
-  end
-  
-  # Manual mode
-  
-  # TODO
-  
-end
-
+# if node[:amon][:install_method] == :auto
+#   
+#   # Auto mode
+#   
+#   service "amon" do
+#     supports :restart => true, :start => true, :stop => true, :status => true
+#     action [ :enable, :restart ]
+#   end
+#   service "amond" do
+#     supports :restart => true, :start => true, :stop => true, :status => true
+#     action [ :enable, :restart ]
+#   end
+#   
+#   # Manual mode
+#   
+#   # TODO
+#   
+# end
+# 
 
 
 

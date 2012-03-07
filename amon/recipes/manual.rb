@@ -5,8 +5,6 @@ deb_linux = platform?("ubuntu", "debian")
 # 
 # 
 
-package 'curl'
-
 # Following the Manual Installation instructions on 
 # http://amon.cx/guide/install/
 
@@ -52,13 +50,13 @@ pkgs = rpm_linux ? ['python-devel'] : ['gcc', 'python-dev']
 pkgs.each { |pkg| package pkg }
 
 # 3. Copy the configuration file from http://config.amon.cx/amon.conf to /etc/amon.conf
-remote_file "/etc/amon.conf" do 
-  source "http://config.amon.cx/amon.conf";
-  # owner node[:amon][:user]
-  owner 'root'
-  # SHA-256 checksum
-  checksum "05326804ac1d129062ca501efbb43ba6752a84f00135aa85abb2e64f372e7a90"
-end
+# remote_file "/etc/amon.conf" do 
+#   source "http://config.amon.cx/amon.conf";
+#   # owner node[:amon][:user]
+#   owner 'root'
+#   # SHA-256 checksum
+#   checksum "05326804ac1d129062ca501efbb43ba6752a84f00135aa85abb2e64f372e7a90"
+# end
 
 # 4. Copy the system info collect daemon from http://config.amon.cx/amond to /etc/init.d/amond
 remote_file "/etc/init.d/amond" do 
@@ -85,3 +83,12 @@ end
 directory "/usr/local/amon" do 
   owner node[:amon][:user]
 end
+
+
+
+# Start the Services
+if node[:amon][:autostart]
+  require_recipe 'amon::services' 
+end
+
+
