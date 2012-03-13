@@ -1,11 +1,11 @@
 name "base"
-description "Base Role. Installs core packages and users. This role should be applied to all new servers."
+description "Base Role. Installs core packages, users, groups, and firewall. This role should be applied to all new servers."
 run_list [
 
   # Essential package handlers
-  # "apt",
-  # "build-essential",
-  # "git",
+  "apt",
+  "build-essential",
+  "git",
   
   # Struck Core
   "struck_core::default",
@@ -15,9 +15,6 @@ run_list [
   "struck_core::sysadmins", 
   "struck_core::firewall"
 
-  
-  # 
-  
 ]
 
 
