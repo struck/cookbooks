@@ -8,7 +8,7 @@
 #
 
 tested_platforms = {
-  :ubuntu => ["10.04"]
+  :ubuntu => ["10.04", "11.10"]
 }
 
 # Kick you out if you're not using a system this recipe has been tested on.
