@@ -22,38 +22,57 @@
 # any live website, and should be used as the global address for the website.)
 # 
 sysadmin = node[:authorization][:sysadmin]
+deployer = node[:authorization][:deployer]
 
 # Required for passwords on ubuntu
 # package 'libshadow-ruby1.8'
 
-user sysadmin[:id] do
-  # All values should have default values based on role default attributes.
-  username sysadmin[:id]
-  comment sysadmin[:comment]
-  shell sysadmin[:shell]
+for u in [sysadmin, deployer] do
 
-  # Groups
-  gid "users"
+  user u[:id] do
+    # All values should have default values based on role default attributes.
+    username u[:id]
+    comment u[:comment]
+    shell u[:shell]
+
+    # Groups
+    gid "users"
+
+    # Home dir
+    unless u[:home] == false
+      home "/home/#{u[:id]}" 
+      supports({ :manage_home => true })
+    end
+
+    # password
+    # password "$1$94BGQVwZ$6Gq21xBKCnyBbRU4sTOwE0"
+    # TODO: WTF, password not working even though libshadow-ruby is installed.
+  end
   
-  # Home dir
-  home "/home/#{sysadmin[:id]}"
-  supports({ :manage_home => true })
+  # Create all groups listed by the sysadmin data.# Automatically add groups to this user if they weren't specified in the group list
+  unless u[:autogroups] == false
+    u[:groups].push(u[:id]).uniq!
+  end
 
-  # password
-  # password "$1$94BGQVwZ$6Gq21xBKCnyBbRU4sTOwE0"
-  # TODO: WTF, password not working even though libshadow-ruby is installed.
-end
-
-# Create all groups listed by the sysadmin data.
-for sysgroup in sysadmin[:groups] do
-  group sysgroup do
-    members [sysadmin[:id]]
-    append false
-  end 
+  for sysgroup in u[:groups] do
+    group sysgroup do
+      members [u[:id]]
+      # Appends these members to this group.
+      # TODO: is this the correct way to go about it? 
+      # what if a server is reprovisioned? and an old
+      # user needs to be removed? meh
+      # If append is false, and you have several users
+      # in the sudo group, only the last user will be 
+      # in the group after provisioning. 
+      append true
+    end 
+  end
+  
+  # action :manage
 end
 
 # Run the sudo recipe, which automatically handles sudo rights.
-require_recipe 'sudo'
+# require_recipe 'sudo'
 
 # Root SSH Access
 node[:authorization][:disable_root_ssh] = true if node[:authorization][:disable_root_ssh].nil?

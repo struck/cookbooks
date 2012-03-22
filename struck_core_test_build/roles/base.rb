@@ -35,7 +35,7 @@ default_attributes :server => {
 
 # The sysadmin users, groups, and the sudo lightsabre.
 :authorization => {
-  # The user/primary is the main user that will be performing ongoing
+  # The sysadmin user is the main user that will be performing ongoing
   # actions and ssh logins on this machine. Similar to the old convention
   # of naming primary admin users after the server name itself, this 
   # username should generally be allowed to remain default across multiple
@@ -47,16 +47,25 @@ default_attributes :server => {
     "id" => "struck",
     "ssh_keys" => "ssh-rsa AAAAB3Nz...yhCw== bofh",
     # "groups" => [ "struck", "devopers", "wheel" ],
-    "groups" => [ "wheel" ],
-    "uid" => 2001,
+    "groups" => [ "sudo" ],
+    # "uid" => 2001,
     "shell" => "\/bin\/bash",
     "comment" => "Struck Global Admin User",
+    :home => false,
     "openid" => "nerds@struck.com"
   },
   
+  # 
+  "deployer" => {
+    "id" => "app",
+    "groups" => [ "sudo" ],
+    "shell" => "\/bin\/bash",
+    "comment" => "This user runs the applications on this server."
+  }
+  
   # Which groups to add sudo priveleges to. 
   "sudo" => {
-    "groups" => [ "wheel" ],
+    "groups" => [ "sudo" ],
     "passwordless" => true
   },
   

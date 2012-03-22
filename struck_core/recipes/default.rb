@@ -27,3 +27,17 @@ if node[:instance_role] == 'vagrant'
   include_recipe 'struck_core::vagrant'
   puts "** \n"
 end
+
+# Essential package handlers
+require_recipe "apt"
+require_recipe "build-essential"
+require_recipe "git"
+
+# Struck Core
+# Core server settings 
+# require_recipe "struck_core::server"
+# Core sysadmin users/groups
+# require_recipe "struck_core::users"
+# Core firewall. Always lock it down.
+require_recipe "struck_core::firewall"
+
